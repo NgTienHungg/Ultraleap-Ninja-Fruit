@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.hungnt.packages": {
+      "version": "https://gitlab.com/NgTienHungg/HungNT-Packages.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f0bcd6497f4b2b550bff45180f3cbe0689a46c48"
+    },
     "com.ultraleap.tracking": {
       "version": "7.1.0",
       "depth": 0,
