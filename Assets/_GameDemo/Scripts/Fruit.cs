@@ -8,6 +8,7 @@ public class Fruit : MonoBehaviour
     [Space]
     public Rigidbody rb;
     public float maxForce = 10f;
+    public float lifeTime = 5f;
 
     private void Start()
     {
@@ -16,12 +17,14 @@ public class Fruit : MonoBehaviour
 
         // Gán màu ngẫu nhiên cho Material của đối tượng
         objectRenderer.material.color = randomColor;
+
+        Destroy(gameObject, lifeTime);
     }
 
     private void OnMouseDown()
     {
         Debug.Log("OnMouseDown");
-        
+
         // Tạo vector lực ngẫu nhiên
         Vector3 randomDirection = new Vector3(
             Random.Range(-1f, 1f),
