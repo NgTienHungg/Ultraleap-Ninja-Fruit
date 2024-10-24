@@ -2,23 +2,25 @@ using UnityEngine;
 
 public class Fruit : MonoBehaviour
 {
-    // Gắn Material của đối tượng vào đây thông qua Inspector
-    public Renderer objectRenderer;
-
     [Space]
-    public Rigidbody rb;
-    public float maxForce = 10f;
-    public float lifeTime = 5f;
+    [SerializeField] private float maxForce = 10f;
+    [SerializeField] private float lifeTime = 5f;
+
+    private Rigidbody rb;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
     private void Start()
     {
-        // Tạo màu ngẫu nhiên bằng cách sử dụng Random.ColorHSV()
-        Color randomColor = Random.ColorHSV();
-
-        // Gán màu ngẫu nhiên cho Material của đối tượng
-        objectRenderer.material.color = randomColor;
-
         Destroy(gameObject, lifeTime);
+    }
+
+    public void AddForce(Vector2 force, ForceMode forceMode = ForceMode.Impulse)
+    {
+        rb.AddForce(force, forceMode);
     }
 
     private void OnMouseDown()
