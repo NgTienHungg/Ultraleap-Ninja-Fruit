@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class FruitSpawner : MonoBehaviour
 {
-    public Fruit fruitPrefab;
+    public Fruit[] fruitPrefabs;
     public Transform bottomLeftPoint;
     public Transform bottomRightPoint;
     public float spawnInterval = 1.5f;
@@ -31,12 +31,18 @@ public class FruitSpawner : MonoBehaviour
     private void SpawnAndShootFruit()
     {
         var spawnX = Random.Range(bottomLeftPoint.position.x, bottomRightPoint.position.x);
-        var spawnPos = new Vector3(spawnX, bottomLeftPoint.position.y, 0f);
-        var fruit = Instantiate(fruitPrefab, spawnPos, Quaternion.identity);
+        var spawnPos = new Vector3(spawnX, bottomLeftPoint.position.y, bottomLeftPoint.position.z);
+        var fruit = Instantiate(fruitPrefabs.Rand(), spawnPos, Quaternion.identity);
 
         var shootForce = Random.Range(minShootForce, maxShootForce);
         var directionX = Random.Range(-horizontalForce, horizontalForce);
         var force = new Vector2(directionX, shootForce);
         fruit.AddForce(force);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(bottomLeftPoint.position, bottomRightPoint.position);
     }
 }
