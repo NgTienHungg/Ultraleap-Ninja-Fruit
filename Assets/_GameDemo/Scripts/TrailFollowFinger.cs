@@ -4,9 +4,13 @@ using Vector3 = UnityEngine.Vector3;
 
 public class TrailFollowFinger : MonoBehaviour
 {
-    [SerializeField] private Finger.FingerType fingerType;
-    [SerializeField] private GameObject trail;
-    [SerializeField] private float minDistanceActiveTrail = 1f;
+    public Finger.FingerType fingerType;
+    public bool useLeftHand;
+    public bool useRightHand;
+
+    [Space]
+    public GameObject trail;
+    public float minDistanceActiveTrail = 1f;
 
     private LeapProvider _leapProvider;
     private Vector3 _lastPos;
@@ -28,7 +32,7 @@ public class TrailFollowFinger : MonoBehaviour
 
     private void OnUpdateFrame(Frame frame)
     {
-        var hand = frame.GetHand(Chirality.Right);
+        var hand = frame.GetHand(useRightHand ? Chirality.Right : Chirality.Left);
 
         if (hand == null)
         {
