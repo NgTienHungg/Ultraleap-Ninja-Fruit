@@ -2,54 +2,55 @@ using Leap;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
-namespace Game.NinjaFruit
+public class TrailFollowFinger : MonoBehaviour
 {
-    public class TrailFollowFinger : MonoBehaviour
+    public Finger.FingerType fingerType;
+    public bool useLeftHand;
+    public bool useRightHand;
+
+    [Space]
+    public GameObject trail;
+    public float minDistanceActiveTrail = 1f;
+
+    private LeapProvider _leapProvider;
+    private Vector3 _lastPos;
+
+    private void Awake()
     {
-        [SerializeField] private Finger.FingerType fingerType;
-        [SerializeField] private GameObject trail;
-        [SerializeField] private float minDistanceActiveTrail = 1f;
+        _leapProvider = Hands.Provider;
+    }
 
-        private LeapProvider _leapProvider;
-        private Vector3 _lastPos;
+    private void OnEnable()
+    {
+        _leapProvider.OnUpdateFrame += OnUpdateFrame;
+    }
 
-        private void Awake()
+    private void OnDisable()
+    {
+        _leapProvider.OnUpdateFrame -= OnUpdateFrame;
+    }
+
+    private void OnUpdateFrame(Frame frame)
+    {
+        var hand = frame.GetHand(useRightHand ? Chirality.Right : Chirality.Left);
+
+        if (hand == null)
         {
-            _leapProvider = Hands.Provider;
+            trail.SetActive(false);
+            return;
         }
 
-        private void OnEnable()
+        var finger = hand.fingers[(int)fingerType];
+        if (Vector3.Distance(finger.TipPosition, _lastPos) >= minDistanceActiveTrail)
         {
-            _leapProvider.OnUpdateFrame += OnUpdateFrame;
+            trail.SetActive(true);
+            trail.transform.position = finger.TipPosition;
+        }
+        else
+        {
+            trail.SetActive(false);
         }
 
-        private void OnDisable()
-        {
-            _leapProvider.OnUpdateFrame -= OnUpdateFrame;
-        }
-
-        private void OnUpdateFrame(Frame frame)
-        {
-            var hand = frame.GetHand(Chirality.Right);
-
-            if (hand == null)
-            {
-                trail.SetActive(false);
-                return;
-            }
-
-            var finger = hand.fingers[(int)fingerType];
-            if (Vector3.Distance(finger.TipPosition, _lastPos) >= minDistanceActiveTrail)
-            {
-                trail.SetActive(true);
-                trail.transform.position = finger.TipPosition;
-            }
-            else
-            {
-                trail.SetActive(false);
-            }
-
-            _lastPos = finger.TipPosition;
-        }
+        _lastPos = finger.TipPosition;
     }
 }
