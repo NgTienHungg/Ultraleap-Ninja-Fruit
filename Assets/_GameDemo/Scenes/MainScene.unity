@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44129854, g: 0.49010128, b: 0.57015306, a: 1}
+  m_IndirectSpecularColor: {r: 0.44129786, g: 0.49010056, b: 0.570152, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -155,13 +155,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 346657433}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.06975647, y: 0, z: 0, w: 0.9975641}
-  m_LocalPosition: {x: 0, y: 0.169, z: -0.476}
+  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
+  m_LocalPosition: {x: 0, y: 0.59, z: -0.476}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -8, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
 --- !u!81 &346657435
 AudioListener:
   m_ObjectHideFlags: 0
@@ -188,7 +188,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.16862746, g: 0.16862746, b: 0.16862746, a: 0.019607844}
+  m_BackGroundColor: {r: 0.5471698, g: 0.5471698, b: 0.5471698, a: 0.019607844}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -212,8 +212,8 @@ Camera:
   near clip plane: 0.1
   far clip plane: 900
   field of view: 45
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 0.5
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -248,7 +248,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &366695099
 Transform:
   m_ObjectHideFlags: 0
@@ -1198,12 +1198,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fruitPrefabs:
   - {fileID: 460194105716540164, guid: 093feca3ed9a36845a31381a7ca49bf2, type: 3}
-  - {fileID: 5143240693970540999, guid: efcab9871e2847d47a01db8ec06e1a2c, type: 3}
-  - {fileID: 9166302156969972274, guid: de7142d7353bb754babf2540b98acb7d, type: 3}
-  - {fileID: 7829318911512551253, guid: 7f920a9b94652d64a81045b7f2b3d21c, type: 3}
-  - {fileID: 5130194094194650096, guid: bf006667193637d4487d56f66ad8b51a, type: 3}
-  - {fileID: 3494929225287892181, guid: bfd57c3ad3ff97f44813d9e52f10b9e9, type: 3}
-  - {fileID: 3080246753360731533, guid: 67f323411c3a8af469e23761761d0c10, type: 3}
+  - {fileID: 7419057692604280979, guid: 225ded646b5b66646882309b77892ed7, type: 3}
+  - {fileID: 7022246127479763644, guid: 46c15702f26d982408e9512a751dc4c1, type: 3}
+  - {fileID: 7823292730815799306, guid: 6bca88592eb6c38498417160ce51f56b, type: 3}
+  - {fileID: 3917919108352255082, guid: 3aa422b6ba3b4f74990fb2496ab2236b, type: 3}
+  - {fileID: 1636457420922695516, guid: f14db25476e12e34bb90d67eb9479163, type: 3}
+  - {fileID: 6614116673368384260, guid: d3add54a3610f07458af65ce16d15315, type: 3}
   bottomLeftPoint: {fileID: 1572832952}
   bottomRightPoint: {fileID: 1564259120}
   spawnInterval: 1.5
@@ -1322,6 +1322,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fingerType: 1
+  useLeftHand: 0
+  useRightHand: 0
   trail: {fileID: 896162709}
   minDistanceActiveTrail: 0
 --- !u!1 &1981127791
