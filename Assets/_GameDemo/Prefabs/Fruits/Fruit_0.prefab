@@ -42,9 +42,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4848912125647457849}
   serializedVersion: 4
-  m_Mass: 0.6
-  m_Drag: 5
-  m_AngularDrag: 0.05
+  m_Mass: 1
+  m_Drag: 2
+  m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -75,7 +75,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoDestroy: 1
   lifeTime: 5
-  maxTorque: 0.2
+  maxTorque: 0.3
 --- !u!1 &6089184645911921570
 GameObject:
   m_ObjectHideFlags: 0

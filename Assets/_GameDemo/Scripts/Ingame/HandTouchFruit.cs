@@ -13,7 +13,7 @@ namespace NinjaFruit
 
                 if (Physics.Raycast(ray, out hit))
                 {
-                    if (hit.collider.CompareTag("Fruit"))
+                    if (hit.collider.CompareTag(GameConfig.Tag.FRUIT))
                     {
                         Destroy(hit.collider.gameObject);
                     }
