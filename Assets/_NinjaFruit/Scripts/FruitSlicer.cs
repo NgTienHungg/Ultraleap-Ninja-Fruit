@@ -4,17 +4,36 @@ using UnityEngine;
 
 namespace NinjaFruit
 {
-    public class Slicer : MonoBehaviour
+    public class FruitSlicer : MonoBehaviour
     {
+        public Rigidbody fruitRigidbody;
         public GameObject fruitModel;
         public Material intersectionMaterial;
         public float splitDistance = 0.1f;
+        public Transform slicePlane;
+        private float sliceForce;
 
         private MeshSlicer meshSlicer = new MeshSlicer();
         private (GameObject, GameObject) result;
 
-        public Transform slicePlane;
-        private float sliceForce;
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                Blade blade = other.GetComponent<Blade>();
+                slicePlane = blade.transform;
+                sliceForce = blade.sliceForce;
+                Slice();
+            }
+        }
+
+        [Button]
+        public void Slice()
+        {
+            PreSliceOperation();
+            result = meshSlicer.Slice(fruitModel, Get3PointsOnPlane(new Plane(slicePlane.up, slicePlane.position)), intersectionMaterial);
+            PostSliceOperation();
+        }
 
         private (Vector3, Vector3, Vector3) Get3PointsOnPlane(Plane p)
         {
@@ -62,32 +81,15 @@ namespace NinjaFruit
 
             // Add a force to each slice based on the blade direction
             var rb1 = result.Item1.AddComponent<Rigidbody>();
-            rb1.velocity = fruitModel.GetComponent<Rigidbody>().velocity;
+            rb1.velocity = fruitRigidbody.velocity;
             rb1.AddForce(sliceForce * slicePlane.up, ForceMode.Impulse);
 
             var rb2 = result.Item2.AddComponent<Rigidbody>();
-            rb2.velocity = fruitModel.GetComponent<Rigidbody>().velocity;
+            rb2.velocity = fruitRigidbody.velocity;
             rb2.AddForce(-sliceForce * slicePlane.up, ForceMode.Impulse);
         }
 
-        public void Slice(Transform slicer, float force)
-        {
-            slicePlane = slicer;
-            sliceForce = force;
-
-            PreSliceOperation();
-            result = meshSlicer.Slice(fruitModel, Get3PointsOnPlane(new Plane(slicePlane.up, slicePlane.position)), intersectionMaterial);
-            PostSliceOperation();
-        }
-
         [Button]
-        public void SliceTest()
-        {
-            Slice(slicePlane, 0f);
-        }
-
-        [Button]
-        [ContextMenu("Clear")]
         public void Clear()
         {
             if (null != result.Item1)

@@ -4920,7 +4920,6 @@ GameObject:
   - component: {fileID: 8457310349337905134}
   - component: {fileID: 3266447441071319141}
   - component: {fileID: 28027298059251418}
-  - component: {fileID: 8457310349337905133}
   - component: {fileID: 4742354300424843497}
   m_Layer: 0
   m_Name: Fruit_Base
@@ -4995,21 +4994,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8457310349337905133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8457310349337905135}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3b08cbe8beb8eb4280a7535cb1136be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  whole: {fileID: 8763740054025600018}
-  sliced: {fileID: 8763740054113742822}
-  points: 1
 --- !u!114 &4742354300424843497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5022,9 +5006,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dbce4b7f01e4ad9b71185ab46a3187e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fruitRigidbody: {fileID: 3266447441071319141}
   fruitModel: {fileID: 8763740054025600018}
-  intersectionMaterial: {fileID: 2100000, guid: eca68f85421849649b89191d399497b0, type: 2}
+  intersectionMaterial: {fileID: 2100000, guid: 0554f335a713c4a0d8c7f6d243711c69, type: 2}
   splitDistance: 0.1
+  slicePlane: {fileID: 0}
 --- !u!1001 &8457310350440846007
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5257,11 +5243,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2, y: 2, z: 1.0000004}
   m_Center: {x: -0.00000022351742, y: 0.000000014901172, z: 0.50000024}
---- !u!1 &8763740054113742822 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d9a8c81ddca4f2f4eb40598c95c1b369, type: 3}
-  m_PrefabInstance: {fileID: 8457310350440846007}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8457310350487044419
 PrefabInstance:
   m_ObjectHideFlags: 0

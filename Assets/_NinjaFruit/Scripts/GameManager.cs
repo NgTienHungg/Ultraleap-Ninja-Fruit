@@ -50,9 +50,9 @@ public class GameManager : MonoBehaviour
 
     private void ClearScene()
     {
-        Fruit[] fruits = FindObjectsOfType<Fruit>();
+        FruitHalve[] fruits = FindObjectsOfType<FruitHalve>();
 
-        foreach (Fruit fruit in fruits) {
+        foreach (FruitHalve fruit in fruits) {
             Destroy(fruit.gameObject);
         }
 

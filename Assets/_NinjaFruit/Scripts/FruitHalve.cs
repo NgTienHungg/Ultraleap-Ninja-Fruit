@@ -1,7 +1,7 @@
 using NinjaFruit;
 using UnityEngine;
 
-public class Fruit : MonoBehaviour
+public class FruitHalve : MonoBehaviour
 {
     public GameObject whole;
     public GameObject sliced;
@@ -50,8 +50,6 @@ public class Fruit : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Blade blade = other.GetComponent<Blade>();
-            var slicer = GetComponent<Slicer>();
-            slicer.Slice(blade.transform, blade.sliceForce);
             Slice(blade.direction, blade.transform.position, blade.sliceForce);
         }
     }
