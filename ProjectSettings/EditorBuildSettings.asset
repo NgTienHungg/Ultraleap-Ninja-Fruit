@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/_NinjaFruit/Scenes/FruitNinja.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Hanzzz/MeshSlicerFree/Demo/MeshSlicerFreeDemo.unity
+    path: Assets/ExternalPackages/Hanzzz/MeshSlicerFree/Demo/MeshSlicerFreeDemo.unity
     guid: c56d297f251db4b809d840d05e205b49
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 29e7373e9abf4784b8239fd30b210736, type: 2}

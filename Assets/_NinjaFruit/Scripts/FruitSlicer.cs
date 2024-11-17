@@ -6,23 +6,30 @@ namespace NinjaFruit
 {
     public class FruitSlicer : MonoBehaviour
     {
-        public Rigidbody fruitRigidbody;
         public GameObject fruitModel;
         public Material intersectionMaterial;
         public float splitDistance = 0.1f;
-        public Transform slicePlane;
-        private float sliceForce;
+        public ParticleSystem juiceEffect;
+
+        private Rigidbody fruitRigidbody;
+        private Collider fruitCollider;
 
         private MeshSlicer meshSlicer = new MeshSlicer();
         private (GameObject, GameObject) result;
+        private Blade blade;
+
+        private void Awake()
+        {
+            fruitRigidbody = GetComponent<Rigidbody>();
+            fruitCollider = GetComponent<Collider>();
+        }
 
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Player"))
             {
                 Blade blade = other.GetComponent<Blade>();
-                slicePlane = blade.transform;
-                sliceForce = blade.sliceForce;
+                this.blade = blade;
                 Slice();
             }
         }
@@ -31,7 +38,7 @@ namespace NinjaFruit
         public void Slice()
         {
             PreSliceOperation();
-            result = meshSlicer.Slice(fruitModel, Get3PointsOnPlane(new Plane(slicePlane.up, slicePlane.position)), intersectionMaterial);
+            result = meshSlicer.Slice(fruitModel, Get3PointsOnPlane(new Plane(blade.transform.up, blade.transform.position)), intersectionMaterial);
             PostSliceOperation();
         }
 
@@ -57,12 +64,12 @@ namespace NinjaFruit
 
         private void PreSliceOperation()
         {
-            if (result.Item1 != null)
-            {
-                DestroyImmediate(result.Item1);
-                DestroyImmediate(result.Item2);
-                result = (null, null);
-            }
+            // if (result.Item1 != null)
+            // {
+            //     DestroyImmediate(result.Item1);
+            //     DestroyImmediate(result.Item2);
+            //     result = (null, null);
+            // }
         }
 
         private void PostSliceOperation()
@@ -73,20 +80,27 @@ namespace NinjaFruit
                 return;
             }
 
+            fruitCollider.enabled = false;
+            fruitModel.SetActive(false);
+            juiceEffect.Play();
+
+            float angle = Mathf.Atan2(blade.direction.y, blade.direction.x) * Mathf.Rad2Deg;
+            result.Item1.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            result.Item2.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
             result.Item1.transform.SetParent(transform, false);
             result.Item2.transform.SetParent(transform, false);
-            result.Item1.transform.position += splitDistance * slicePlane.up;
-            result.Item2.transform.position -= splitDistance * slicePlane.up;
-            fruitModel.SetActive(false);
+            result.Item1.transform.position += splitDistance * blade.transform.up;
+            result.Item2.transform.position -= splitDistance * blade.transform.up;
 
             // Add a force to each slice based on the blade direction
             var rb1 = result.Item1.AddComponent<Rigidbody>();
             rb1.velocity = fruitRigidbody.velocity;
-            rb1.AddForce(sliceForce * slicePlane.up, ForceMode.Impulse);
+            rb1.AddForce(blade.sliceForce * blade.transform.up, ForceMode.Impulse);
 
             var rb2 = result.Item2.AddComponent<Rigidbody>();
             rb2.velocity = fruitRigidbody.velocity;
-            rb2.AddForce(-sliceForce * slicePlane.up, ForceMode.Impulse);
+            rb2.AddForce(-blade.sliceForce * blade.transform.up, ForceMode.Impulse);
         }
 
         [Button]

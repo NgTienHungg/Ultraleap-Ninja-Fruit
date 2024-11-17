@@ -5011,6 +5011,7 @@ MonoBehaviour:
   intersectionMaterial: {fileID: 2100000, guid: 0554f335a713c4a0d8c7f6d243711c69, type: 2}
   splitDistance: 0.1
   slicePlane: {fileID: 0}
+  juiceEffect: {fileID: 5871354886834241202}
 --- !u!1001 &8457310350440846007
 PrefabInstance:
   m_ObjectHideFlags: 0
