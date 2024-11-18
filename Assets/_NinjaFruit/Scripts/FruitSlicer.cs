@@ -96,11 +96,11 @@ namespace NinjaFruit
             // Add a force to each slice based on the blade direction
             var rb1 = result.Item1.AddComponent<Rigidbody>();
             rb1.velocity = fruitRigidbody.velocity;
-            rb1.AddForce(blade.sliceForce * blade.transform.up, ForceMode.Impulse);
+            rb1.AddForceAtPosition(blade.sliceForce * blade.transform.up, blade.transform.position, ForceMode.Impulse);
 
             var rb2 = result.Item2.AddComponent<Rigidbody>();
             rb2.velocity = fruitRigidbody.velocity;
-            rb2.AddForce(-blade.sliceForce * blade.transform.up, ForceMode.Impulse);
+            rb2.AddForceAtPosition(-blade.sliceForce * blade.transform.up, blade.transform.position, ForceMode.Impulse);
         }
 
         [Button]
