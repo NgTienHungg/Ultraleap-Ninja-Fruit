@@ -1,19 +1,22 @@
 using UnityEngine;
 
-public class Bomb : MonoBehaviour
+namespace NinjaFruit
 {
-    public ParticleSystem fxExplosion;
-    
-    private void OnTriggerEnter(Collider other)
+    public class Bomb : MonoBehaviour
     {
-        if (other.CompareTag("Player"))
+        public ParticleSystem fxExplosion;
+    
+        private void OnTriggerEnter(Collider other)
         {
-            GetComponent<Collider>().enabled = false;
-            fxExplosion.transform.SetParent(null);
-            fxExplosion.Play();
-            gameObject.SetActive(false);
+            if (other.CompareTag("Player"))
+            {
+                GetComponent<Collider>().enabled = false;
+                fxExplosion.transform.SetParent(null);
+                fxExplosion.Play();
+                gameObject.SetActive(false);
             
-            GameManager.Instance.Explode();
+                GameManager.Instance.Explode();
+            }
         }
     }
 }
