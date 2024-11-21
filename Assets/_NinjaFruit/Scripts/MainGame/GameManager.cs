@@ -1,36 +1,20 @@
 using System.Collections;
+using BaseSource;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace NinjaFruit
 {
     [DefaultExecutionOrder(-1)]
-    public class GameManager : MonoBehaviour
+    public class GameManager : MonoSingleton<GameManager>
     {
-        public static GameManager Instance { get; private set; }
-
         [SerializeField] private Blade blade;
         [SerializeField] private Spawner spawner;
-        [SerializeField] private Text scoreText;
         [SerializeField] private Image fadeImage;
 
         public int score { get; private set; } = 0;
 
-        private void Awake()
-        {
-            if (Instance != null) {
-                DestroyImmediate(gameObject);
-            } else {
-                Instance = this;
-            }
-        }
-
-        private void OnDestroy()
-        {
-            if (Instance == this) {
-                Instance = null;
-            }
-        }
+        protected override void OnAwake() { }
 
         private void Start()
         {
@@ -47,20 +31,19 @@ namespace NinjaFruit
             spawner.enabled = true;
 
             score = 0;
-            scoreText.text = score.ToString();
         }
 
         private void ClearScene()
         {
-            FruitHalve[] fruits = FindObjectsOfType<FruitHalve>();
-
-            foreach (FruitHalve fruit in fruits) {
+            FruitSlicer[] fruits = FindObjectsOfType<FruitSlicer>();
+            foreach (var fruit in fruits)
+            {
                 Destroy(fruit.gameObject);
             }
 
             Bomb[] bombs = FindObjectsOfType<Bomb>();
-
-            foreach (Bomb bomb in bombs) {
+            foreach (Bomb bomb in bombs)
+            {
                 Destroy(bomb.gameObject);
             }
         }
@@ -68,15 +51,6 @@ namespace NinjaFruit
         public void IncreaseScore(int points)
         {
             score += points;
-            scoreText.text = score.ToString();
-
-            float hiscore = PlayerPrefs.GetFloat("hiscore", 0);
-
-            if (score > hiscore)
-            {
-                hiscore = score;
-                PlayerPrefs.SetFloat("hiscore", hiscore);
-            }
         }
 
         public void Explode()
@@ -121,6 +95,5 @@ namespace NinjaFruit
                 yield return null;
             }
         }
-
     }
 }
