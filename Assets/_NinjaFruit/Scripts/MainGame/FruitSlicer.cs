@@ -6,16 +6,19 @@ namespace NinjaFruit
 {
     public class FruitSlicer : MonoBehaviour
     {
+        [Header("Fruit Settings")]
+        public int points = 1;
         public GameObject fruitModel;
         public Material intersectionMaterial;
         public float splitDistance = 0.1f;
+
+        [Header("Effects")]
         public ParticleSystem juiceEffect;
 
         private Rigidbody fruitRigidbody;
         private Collider fruitCollider;
-
         private MeshSlicer meshSlicer = new MeshSlicer();
-        private (GameObject, GameObject) result;
+        private (GameObject, GameObject) slicedResults = (null, null);
         private Blade blade;
 
         private void Awake()
@@ -28,8 +31,7 @@ namespace NinjaFruit
         {
             if (other.CompareTag("Player"))
             {
-                Blade blade = other.GetComponent<Blade>();
-                this.blade = blade;
+                blade = other.GetComponent<Blade>();
                 Slice();
             }
         }
@@ -37,82 +39,107 @@ namespace NinjaFruit
         [Button]
         public void Slice()
         {
-            PreSliceOperation();
-            result = meshSlicer.Slice(fruitModel, Get3PointsOnPlane(new Plane(blade.transform.up, blade.transform.position)), intersectionMaterial);
-            PostSliceOperation();
+            ClearPreviousSlices();
+            if (TrySlice())
+            {
+                HandlePostSliceEffects();
+            }
         }
 
-        private (Vector3, Vector3, Vector3) Get3PointsOnPlane(Plane p)
+        private void ClearPreviousSlices()
         {
-            Vector3 xAxis;
-            if (0f != p.normal.x)
+            if (slicedResults.Item1 != null)
             {
-                xAxis = new Vector3(-p.normal.y / p.normal.x, 1f, 0f);
+                DestroyImmediate(slicedResults.Item1);
+                DestroyImmediate(slicedResults.Item2);
+                slicedResults = (null, null);
             }
-            else if (0f != p.normal.y)
-            {
-                xAxis = new Vector3(0f, -p.normal.z / p.normal.y, 1f);
-            }
-            else
-            {
-                xAxis = new Vector3(1f, 0f, -p.normal.x / p.normal.z);
-            }
-
-            Vector3 yAxis = Vector3.Cross(p.normal, xAxis);
-            return (-p.distance * p.normal, -p.distance * p.normal + xAxis, -p.distance * p.normal + yAxis);
         }
 
-        private void PreSliceOperation()
+        private bool TrySlice()
         {
-            // if (result.Item1 != null)
-            // {
-            //     DestroyImmediate(result.Item1);
-            //     DestroyImmediate(result.Item2);
-            //     result = (null, null);
-            // }
-        }
+            Plane slicePlane = new Plane(blade.transform.up, blade.transform.position);
+            var pointsOnPlane = GetPointsOnPlane(slicePlane);
 
-        private void PostSliceOperation()
-        {
-            if (result.Item1 == null)
+            slicedResults = meshSlicer.Slice(fruitModel, pointsOnPlane, intersectionMaterial);
+
+            if (slicedResults.Item1 == null)
             {
-                Debug.LogError("Slice plane does not intersect slide target");
-                return;
+                Debug.LogError("Slice plane does not intersect the target.");
+                return false;
             }
 
+            return true;
+        }
+
+        private void HandlePostSliceEffects()
+        {
+            DisableFruitModel();
+            PlayJuiceEffect();
+            AlignSlices();
+            AddPhysicsToSlices();
+            GameManager.Instance.IncreaseScore(points);
+        }
+
+        private void DisableFruitModel()
+        {
             fruitCollider.enabled = false;
             fruitModel.SetActive(false);
+        }
+
+        private void PlayJuiceEffect()
+        {
             juiceEffect.Play();
+        }
 
+        private void AlignSlices()
+        {
             float angle = Mathf.Atan2(blade.direction.y, blade.direction.x) * Mathf.Rad2Deg;
-            result.Item1.transform.rotation = Quaternion.Euler(0f, 0f, angle);
-            result.Item2.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            AlignSlice(slicedResults.Item1, angle, splitDistance);
+            AlignSlice(slicedResults.Item2, angle, -splitDistance);
+        }
 
-            result.Item1.transform.SetParent(transform, false);
-            result.Item2.transform.SetParent(transform, false);
-            result.Item1.transform.position += splitDistance * blade.transform.up;
-            result.Item2.transform.position -= splitDistance * blade.transform.up;
+        private void AlignSlice(GameObject slice, float angle, float offset)
+        {
+            slice.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            slice.transform.SetParent(transform, false);
+            slice.transform.position += offset * blade.transform.up;
+        }
 
-            // Add a force to each slice based on the blade direction
-            var rb1 = result.Item1.AddComponent<Rigidbody>();
-            rb1.velocity = fruitRigidbody.velocity;
-            rb1.AddForceAtPosition(blade.sliceForce * blade.transform.up, blade.transform.position, ForceMode.Impulse);
+        private void AddPhysicsToSlices()
+        {
+            AddPhysicsToSlice(slicedResults.Item1, blade.sliceForce);
+            AddPhysicsToSlice(slicedResults.Item2, -blade.sliceForce);
+        }
 
-            var rb2 = result.Item2.AddComponent<Rigidbody>();
-            rb2.velocity = fruitRigidbody.velocity;
-            rb2.AddForceAtPosition(-blade.sliceForce * blade.transform.up, blade.transform.position, ForceMode.Impulse);
+        private void AddPhysicsToSlice(GameObject slice, float forceDirection)
+        {
+            var rb = slice.AddComponent<Rigidbody>();
+            rb.velocity = fruitRigidbody.velocity;
+            rb.AddForceAtPosition(forceDirection * blade.transform.up, blade.transform.position, ForceMode.Impulse);
+        }
+
+        private (Vector3, Vector3, Vector3) GetPointsOnPlane(Plane plane)
+        {
+            Vector3 xAxis = GetNonParallelAxis(plane.normal);
+            Vector3 yAxis = Vector3.Cross(plane.normal, xAxis);
+            Vector3 planeOrigin = -plane.distance * plane.normal;
+            return (planeOrigin, planeOrigin + xAxis, planeOrigin + yAxis);
+        }
+
+        private Vector3 GetNonParallelAxis(Vector3 normal)
+        {
+            if (normal.x != 0f)
+                return new Vector3(-normal.y / normal.x, 1f, 0f);
+            if (normal.y != 0f)
+                return new Vector3(0f, -normal.z / normal.y, 1f);
+            return new Vector3(1f, 0f, -normal.x / normal.z);
         }
 
         [Button]
         public void Clear()
         {
-            if (null != result.Item1)
-            {
-                DestroyImmediate(result.Item1);
-                DestroyImmediate(result.Item2);
-                result = (null, null);
-            }
-
+            ClearPreviousSlices();
             meshSlicer = new MeshSlicer();
             fruitModel.SetActive(true);
         }
