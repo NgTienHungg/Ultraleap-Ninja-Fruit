@@ -10,6 +10,7 @@ namespace NinjaFruit
 
         public GameObject[] fruitPrefabs;
         public GameObject bombPrefab;
+
         [Range(0f, 1f)]
         public float bombChance = 0.05f;
 
