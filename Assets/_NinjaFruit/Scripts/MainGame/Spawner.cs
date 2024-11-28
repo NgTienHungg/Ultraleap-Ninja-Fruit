@@ -64,15 +64,24 @@ namespace NinjaFruit
                 Quaternion rotation = Quaternion.Euler(0f, 0f, Random.Range(minAngle, maxAngle));
 
                 GameObject fruit = Instantiate(prefab, position, rotation);
-                // fruit.transform.SetParent(transform);
-                // fruit.transform.localScale = Vector3.one;
                 Destroy(fruit, maxLifetime);
 
                 float force = Random.Range(minForce, maxForce);
+
+                // Add upward force
                 fruit.GetComponent<Rigidbody>().AddForce(fruit.transform.up * force, ForceMode.Impulse);
+
+                // Add random torque for rotation
+                Vector3 randomTorque = new Vector3(
+                    Random.Range(-1f, 1f), 
+                    Random.Range(-1f, 1f), 
+                    Random.Range(-1f, 1f)
+                );
+                fruit.GetComponent<Rigidbody>().AddTorque(randomTorque * force, ForceMode.Impulse);
 
                 yield return new WaitForSeconds(Random.Range(minSpawnDelay, maxSpawnDelay));
             }
         }
+
     }
 }

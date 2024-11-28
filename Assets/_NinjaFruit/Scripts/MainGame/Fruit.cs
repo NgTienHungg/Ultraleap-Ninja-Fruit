@@ -59,7 +59,7 @@ namespace NinjaFruit
         private bool TrySlice()
         {
             Plane slicePlane = new Plane(blade.transform.up, blade.transform.position);
-            var pointsOnPlane = GetPointsOnPlane(slicePlane);
+            var pointsOnPlane = Get3PointsOnPlane(slicePlane);
 
             slicedResults = meshSlicer.Slice(fruitModel, pointsOnPlane, intersectionMaterial);
 
@@ -68,6 +68,9 @@ namespace NinjaFruit
                 Debug.LogError("Slice plane does not intersect the target.");
                 return false;
             }
+
+            slicedResults.Item1.gameObject.name = "Slice 1";
+            slicedResults.Item2.gameObject.name = "Slice 2";
 
             return true;
         }
@@ -78,6 +81,7 @@ namespace NinjaFruit
             PlayJuiceEffect();
             AlignSlices();
             AddPhysicsToSlices();
+            
             ScoreManager.Instance.IncreaseScore(points);
         }
 
@@ -94,16 +98,25 @@ namespace NinjaFruit
 
         private void AlignSlices()
         {
-            float angle = Mathf.Atan2(blade.direction.y, blade.direction.x) * Mathf.Rad2Deg;
-            AlignSlice(slicedResults.Item1, angle, splitDistance);
-            AlignSlice(slicedResults.Item2, angle, -splitDistance);
+            // Sử dụng mặt phẳng cắt để xác định hướng tách
+            Plane slicePlane = new Plane(blade.transform.up, blade.transform.position);
+
+            AlignSlice(slicedResults.Item1, blade.direction, splitDistance);
+            AlignSlice(slicedResults.Item2, blade.direction, -splitDistance);
         }
 
-        private void AlignSlice(GameObject slice, float angle, float offset)
+
+        private void AlignSlice(GameObject slice, Vector3 normal, float offset)
         {
-            slice.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            // Tính toán góc xoay từ pháp tuyến của mặt phẳng
+            Quaternion sliceRotation = Quaternion.LookRotation(Vector3.forward, normal);
+
+            // Đặt góc xoay của lát cắt
+            slice.transform.rotation = sliceRotation;
+
+            // Tách lát ra bằng cách dịch chuyển theo pháp tuyến của mặt phẳng
             slice.transform.SetParent(transform, false);
-            slice.transform.position += offset * blade.transform.up;
+            slice.transform.position += normal * offset;
         }
 
         private void AddPhysicsToSlices()
@@ -119,21 +132,24 @@ namespace NinjaFruit
             rb.AddForceAtPosition(forceDirection * blade.transform.up, blade.transform.position, ForceMode.Impulse);
         }
 
-        private (Vector3, Vector3, Vector3) GetPointsOnPlane(Plane plane)
+        private (Vector3, Vector3, Vector3) Get3PointsOnPlane(Plane p)
         {
-            Vector3 xAxis = GetNonParallelAxis(plane.normal);
-            Vector3 yAxis = Vector3.Cross(plane.normal, xAxis);
-            Vector3 planeOrigin = -plane.distance * plane.normal;
-            return (planeOrigin, planeOrigin + xAxis, planeOrigin + yAxis);
-        }
+            Vector3 xAxis;
+            if (0f != p.normal.x)
+            {
+                xAxis = new Vector3(-p.normal.y / p.normal.x, 1f, 0f);
+            }
+            else if (0f != p.normal.y)
+            {
+                xAxis = new Vector3(0f, -p.normal.z / p.normal.y, 1f);
+            }
+            else
+            {
+                xAxis = new Vector3(1f, 0f, -p.normal.x / p.normal.z);
+            }
 
-        private Vector3 GetNonParallelAxis(Vector3 normal)
-        {
-            if (normal.x != 0f)
-                return new Vector3(-normal.y / normal.x, 1f, 0f);
-            if (normal.y != 0f)
-                return new Vector3(0f, -normal.z / normal.y, 1f);
-            return new Vector3(1f, 0f, -normal.x / normal.z);
+            Vector3 yAxis = Vector3.Cross(p.normal, xAxis);
+            return (-p.distance * p.normal, -p.distance * p.normal + xAxis, -p.distance * p.normal + yAxis);
         }
 
         [Button]
