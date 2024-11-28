@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace NinjaFruit
 {
-    public class FruitSlicer : MonoBehaviour
+    public class Fruit : MonoBehaviour
     {
         [Header("Fruit Settings")]
         public int points = 1;

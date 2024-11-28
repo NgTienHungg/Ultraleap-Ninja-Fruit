@@ -35,7 +35,7 @@ namespace NinjaFruit
 
         private void ClearScene()
         {
-            FruitSlicer[] fruits = FindObjectsOfType<FruitSlicer>();
+            Fruit[] fruits = FindObjectsOfType<Fruit>();
             foreach (var fruit in fruits)
             {
                 Destroy(fruit.gameObject);
