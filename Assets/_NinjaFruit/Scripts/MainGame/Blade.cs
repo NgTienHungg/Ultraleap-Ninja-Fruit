@@ -4,12 +4,14 @@ namespace NinjaFruit
 {
     public class Blade : MonoBehaviour
     {
+        public Collider sliceCollider;
         public float sliceForce = 5f;
+
+        [Space]
+        public TrailRenderer sliceTrail;
         public float minSliceVelocity = 0.01f;
 
         private Camera mainCamera;
-        private Collider sliceCollider;
-        private TrailRenderer sliceTrail;
 
         public Vector3 direction { get; private set; }
         public bool slicing { get; private set; }
@@ -17,8 +19,6 @@ namespace NinjaFruit
         private void Awake()
         {
             mainCamera = Camera.main;
-            sliceCollider = GetComponent<Collider>();
-            sliceTrail = GetComponentInChildren<TrailRenderer>();
         }
 
         private void OnEnable()
@@ -55,6 +55,8 @@ namespace NinjaFruit
 
             slicing = true;
             sliceCollider.enabled = true;
+
+            sliceTrail.gameObject.SetActive(true);
             sliceTrail.enabled = true;
             sliceTrail.Clear();
         }
@@ -63,6 +65,8 @@ namespace NinjaFruit
         {
             slicing = false;
             sliceCollider.enabled = false;
+
+            sliceTrail.gameObject.SetActive(false);
             sliceTrail.enabled = false;
         }
 
@@ -73,7 +77,9 @@ namespace NinjaFruit
             direction = newPosition - transform.position;
 
             float velocity = direction.magnitude / Time.deltaTime;
-            sliceCollider.enabled = velocity > minSliceVelocity;
+            bool canSlice = velocity >= minSliceVelocity;
+            sliceCollider.enabled = canSlice;
+            sliceTrail.gameObject.SetActive(canSlice);
 
             transform.localPosition = newPosition;
         }
