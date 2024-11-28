@@ -8,11 +8,12 @@ namespace NinjaFruit
     [DefaultExecutionOrder(-1)]
     public class GameManager : MonoSingleton<GameManager>
     {
+        public UIMainGamePanel uiMainGamePanel;
         [SerializeField] private Blade blade;
         [SerializeField] private Spawner spawner;
         [SerializeField] private Image fadeImage;
 
-        public int score { get; private set; } = 0;
+        // public int score { get; private set; } = 0;
 
         protected override void OnAwake() { }
 
@@ -30,7 +31,8 @@ namespace NinjaFruit
             blade.enabled = true;
             spawner.enabled = true;
 
-            score = 0;
+            ScoreManager.Instance.ResetScore();
+            uiMainGamePanel.Setup();
         }
 
         private void ClearScene()
@@ -46,11 +48,6 @@ namespace NinjaFruit
             {
                 Destroy(bomb.gameObject);
             }
-        }
-
-        public void IncreaseScore(int points)
-        {
-            score += points;
         }
 
         public void Explode()

@@ -1,5 +1,7 @@
 using BaseSource;
+using DG.Tweening;
 using TMPro;
+using UnityEngine;
 
 namespace NinjaFruit
 {
@@ -12,9 +14,29 @@ namespace NinjaFruit
             scoreTxt.text = "0";
         }
 
-        private void FixedUpdate()
+        private void OnEnable()
         {
-            scoreTxt.text = GameManager.Instance.score.ToString();
+            this.RegisterListener(Constant.Event.OnScoreChanged, OnScoreChanged);
         }
+
+        private void OnDisable()
+        {
+            this.RemoveListener(Constant.Event.OnScoreChanged, OnScoreChanged);
+        }
+
+        private void OnScoreChanged(object scoreChanged)
+        {
+            scoreTxt.text = ScoreManager.Instance.Score.ToString();
+
+            scoreTxt.transform.DOKill();
+            scoreTxt.transform.localScale = Vector3.one * 1.3f;
+            scoreTxt.transform.DOScale(Vector3.one * 1f, 0.2f)
+                .SetEase(Ease.OutQuad).SetUpdate(true);
+        }
+
+        // private void FixedUpdate()
+        // {
+        //     scoreTxt.text = GameManager.Instance.score.ToString();
+        // }
     }
 }

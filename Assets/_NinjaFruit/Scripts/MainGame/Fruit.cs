@@ -78,7 +78,7 @@ namespace NinjaFruit
             PlayJuiceEffect();
             AlignSlices();
             AddPhysicsToSlices();
-            GameManager.Instance.IncreaseScore(points);
+            ScoreManager.Instance.IncreaseScore(points);
         }
 
         private void DisableFruitModel()
