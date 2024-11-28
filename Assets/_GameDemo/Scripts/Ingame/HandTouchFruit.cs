@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace NinjaFruit
+namespace GameDemo
 {
     public class HandTouchFruit : MonoBehaviour
     {
@@ -49,7 +49,7 @@ namespace NinjaFruit
 
             if (Physics.Raycast(startPoint, direction.normalized, out RaycastHit hit, distance))
             {
-                if (hit.collider.CompareTag(GameConfig.Tag.FRUIT))
+                if (hit.collider.CompareTag("Fruit"))
                 {
                     Debug.Log("Hit fruit: " + hit.collider.name);
                     Destroy(hit.collider.gameObject);

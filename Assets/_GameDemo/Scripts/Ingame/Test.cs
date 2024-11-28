@@ -1,7 +1,7 @@
 using Leap;
 using UnityEngine;
 
-namespace NinjaFruit
+namespace GameDemo
 {
     public class Test : MonoBehaviour
     {

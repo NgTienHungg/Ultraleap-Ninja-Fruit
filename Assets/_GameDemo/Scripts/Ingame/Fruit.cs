@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace NinjaFruit
+namespace GameDemo
 {
     public class Fruit : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 using BaseSource;
 using UnityEngine;
 
-namespace NinjaFruit
+namespace GameDemo
 {
     public class FxSpawner : MonoSingleton<FxSpawner>
     {

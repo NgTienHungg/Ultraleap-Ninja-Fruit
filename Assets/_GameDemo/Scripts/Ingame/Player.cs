@@ -4,7 +4,7 @@ using UnityEngine;
 using Utils = BaseSource.Utils;
 using Vector3 = UnityEngine.Vector3;
 
-namespace NinjaFruit
+namespace GameDemo
 {
     public class Player : MonoBehaviour
     {
