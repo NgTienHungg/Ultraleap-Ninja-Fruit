@@ -6,20 +6,26 @@ namespace NinjaFruit
 {
     public class Fruit : MonoBehaviour
     {
-        [Header("Fruit Settings")]
-        public int points = 1;
+        [Header("Slice")]
         public GameObject fruitModel;
+        public float standardRadius = 1f;
         public Material intersectionMaterial;
         public float splitDistance = 0.1f;
-
-        [Header("Effects")]
         public ParticleSystem juiceEffect;
+
+        [Header("Point")]
+        public int points = 1;
+        public int perfectFactor = 2;
+        public Vector2 sliceRange = new Vector2(0.3f, 0.7f);
+        public Vector2 perfectRange = new Vector2(0.45f, 0.55f);
 
         private Rigidbody fruitRigidbody;
         private Collider fruitCollider;
         private MeshSlicer meshSlicer = new MeshSlicer();
         private (GameObject, GameObject) slicedResults = (null, null);
         private Blade blade;
+
+        private float radius;
 
         private void Awake()
         {
@@ -40,6 +46,7 @@ namespace NinjaFruit
         public void Slice()
         {
             ClearPreviousSlices();
+
             if (TrySlice())
             {
                 HandlePostSliceEffects();
@@ -81,7 +88,7 @@ namespace NinjaFruit
             PlayJuiceEffect();
             AlignSlices();
             AddPhysicsToSlices();
-            
+
             ScoreManager.Instance.IncreaseScore(points);
         }
 
@@ -104,7 +111,6 @@ namespace NinjaFruit
             AlignSlice(slicedResults.Item1, blade.direction, splitDistance);
             AlignSlice(slicedResults.Item2, blade.direction, -splitDistance);
         }
-
 
         private void AlignSlice(GameObject slice, Vector3 normal, float offset)
         {
@@ -158,6 +164,56 @@ namespace NinjaFruit
             ClearPreviousSlices();
             meshSlicer = new MeshSlicer();
             fruitModel.SetActive(true);
+        }
+
+        //========== TEST ==========
+
+        [Space]
+        public Transform testBlade;
+
+        [Button]
+        public void TestSlice()
+        {
+            ClearPreviousSlices();
+
+            // Tạo mặt phẳng cắt
+            Plane slicePlane = new Plane(testBlade.up, testBlade.position);
+
+            // Tính khoảng cách từ tâm đến mặt phẳng cắt
+            float distance = -slicePlane.GetDistanceToPoint(transform.position);
+            Debug.Log($"Khoảng cách ban đầu từ tâm đến mặt phẳng cắt: {distance}");
+
+            // Giới hạn khoảng cách trong sliceRange
+            float clampedDistance = Mathf.Clamp(distance, sliceRange.x, sliceRange.y);
+
+            // Nếu khoảng cách đã bị clamp, cập nhật vị trí mặt phẳng
+            if (Mathf.Abs(clampedDistance - distance) > Mathf.Epsilon)
+            {
+                Debug.Log($"Clamp khoảng cách từ {distance} thành {clampedDistance}");
+
+                // Dịch mặt phẳng cắt lại gần tâm
+                Vector3 offset = (clampedDistance - distance) * slicePlane.normal;
+                slicePlane.Translate(-offset);
+                // slicePlane = new Plane(slicePlane.normal, slicePlane.distance + (clampedDistance - distance));
+                testBlade.position += offset; // Cập nhật vị trí testBlade
+            }
+
+            Debug.Log("Radius: " + transform.localScale.x * standardRadius);
+
+            //new Plane(testBlade.transform.up, testBlade.transform.position)
+            slicedResults = meshSlicer.Slice(fruitModel, Get3PointsOnPlane(slicePlane), intersectionMaterial);
+
+            if (null == slicedResults.Item1)
+            {
+                Debug.Log("Slice plane does not intersect slice target.");
+                return;
+            }
+
+            slicedResults.Item1.transform.SetParent(transform, false);
+            slicedResults.Item2.transform.SetParent(transform, false);
+            slicedResults.Item1.transform.position += splitDistance * testBlade.up;
+            slicedResults.Item2.transform.position -= splitDistance * testBlade.up;
+            fruitModel.SetActive(false);
         }
     }
 }
