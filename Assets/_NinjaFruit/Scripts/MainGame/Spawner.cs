@@ -72,12 +72,12 @@ namespace NinjaFruit
                 fruit.GetComponent<Rigidbody>().AddForce(fruit.transform.up * force, ForceMode.Impulse);
 
                 // Add random torque for rotation
-                Vector3 randomTorque = new Vector3(
-                    Random.Range(-1f, 1f), 
-                    Random.Range(-1f, 1f), 
-                    Random.Range(-1f, 1f)
-                );
-                fruit.GetComponent<Rigidbody>().AddTorque(randomTorque * force, ForceMode.Impulse);
+                // Vector3 randomTorque = new Vector3(
+                //     Random.Range(-1f, 1f), 
+                //     Random.Range(-1f, 1f), 
+                //     Random.Range(-1f, 1f)
+                // );
+                // fruit.GetComponent<Rigidbody>().AddTorque(randomTorque * force, ForceMode.Impulse);
 
                 yield return new WaitForSeconds(Random.Range(minSpawnDelay, maxSpawnDelay));
             }

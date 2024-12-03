@@ -1,16 +1,17 @@
 using Hanzzz.MeshSlicerFree;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.InputSystem.Android;
 
 namespace NinjaFruit
 {
     public class Fruit : MonoBehaviour
     {
         [Header("Slice")]
-        public GameObject fruitModel;
         public float standardRadius = 1f;
-        public Material intersectionMaterial;
         public float splitDistance = 0.1f;
+        public GameObject fruitModel;
+        public Material intersectionMaterial;
         public ParticleSystem juiceEffect;
 
         [Header("Point")]
@@ -70,16 +71,15 @@ namespace NinjaFruit
         {
             ClearPreviousSlices();
 
-            // Tạo mặt phẳng cắt
             Plane slicePlane = new Plane(testBlade.up, testBlade.position);
-
-            // Tính khoảng cách từ tâm đến mặt phẳng cắt
             float distanceFromPlaneToFruit = slicePlane.GetDistanceToPoint(transform.position);
             Debug.Log($"Khoảng cách ban đầu từ tâm đến mặt phẳng cắt: {distanceFromPlaneToFruit}");
 
             // Giới hạn khoảng cách trong sliceRange
-            float clampedDistance = Mathf.Sign(distanceFromPlaneToFruit) *
-                                    Mathf.Clamp(Mathf.Abs(distanceFromPlaneToFruit), sliceRange.x * radius, sliceRange.y * radius);
+            // Mathf.Sign(distanceFromPlaneToFruit) *
+            //     Mathf.Clamp(Mathf.Abs(distanceFromPlaneToFruit),
+
+            float clampedDistance = Mathf.Clamp(distanceFromPlaneToFruit, sliceRange.x * radius, sliceRange.y * radius);
 
             // Nếu khoảng cách đã bị clamp, cập nhật vị trí mặt phẳng
             if (Mathf.Abs(clampedDistance - distanceFromPlaneToFruit) > Mathf.Epsilon)
@@ -90,7 +90,7 @@ namespace NinjaFruit
                 Vector3 offset = (clampedDistance - distanceFromPlaneToFruit) * slicePlane.normal;
                 slicePlane.Translate(offset);
                 // slicePlane = new Plane(slicePlane.normal, slicePlane.distance + (clampedDistance - distance));
-                testBlade.position += offset; // Cập nhật vị trí testBlade
+                // testBlade.position += offset; // Cập nhật vị trí testBlade
             }
 
             Debug.Log("Radius: " + transform.localScale.x * standardRadius);
@@ -114,17 +114,16 @@ namespace NinjaFruit
         private bool TrySlice()
         {
             Plane slicePlane = new Plane(blade.transform.up, blade.transform.position);
-            float distance = -slicePlane.GetDistanceToPoint(transform.position); // Tính khoảng cách từ tâm đến mặt phẳng cắt
-            float clampedDistance = Mathf.Clamp(distance, sliceRange.x * radius, sliceRange.y * radius); // Giới hạn khoảng cách trong sliceRange
+            float distanceFromPlaneToFruit = slicePlane.GetDistanceToPoint(transform.position); // Tính khoảng cách từ tâm đến mặt phẳng cắt
+            float clampedDistance = Mathf.Clamp(distanceFromPlaneToFruit, sliceRange.x * radius, sliceRange.y * radius); // Giới hạn khoảng cách trong sliceRange
 
             // Nếu khoảng cách đã bị clamp, cập nhật vị trí mặt phẳng
-            if (Mathf.Abs(clampedDistance - distance) > Mathf.Epsilon)
+            if (Mathf.Abs(clampedDistance - distanceFromPlaneToFruit) > Mathf.Epsilon)
             {
-                Debug.Log($"Clamp khoảng cách từ {distance} thành {clampedDistance}");
+                Debug.Log($"Clamp khoảng cách từ {distanceFromPlaneToFruit} thành {clampedDistance}");
 
-                Vector3 offset = (clampedDistance - distance) * slicePlane.normal;
-                slicePlane.Translate(-offset); // Dịch mặt phẳng cắt lại gần tâm
-                // testBlade.position += offset; // Cập nhật vị trí testBlade
+                Vector3 offset = (clampedDistance - distanceFromPlaneToFruit) * slicePlane.normal;
+                slicePlane.Translate(offset); // Dịch mặt phẳng cắt lại gần tâm
             }
 
             slicedResults = meshSlicer.Slice(fruitModel, Get3PointsOnPlane(slicePlane), intersectionMaterial);
@@ -164,23 +163,28 @@ namespace NinjaFruit
         private void AlignSlices()
         {
             // Sử dụng mặt phẳng cắt để xác định hướng tách
-            Plane slicePlane = new Plane(blade.transform.up, blade.transform.position);
+            float angle = Mathf.Atan2(blade.direction.y, blade.direction.x) * Mathf.Rad2Deg;
+            if (Mathf.Abs(angle) > 90)
+            {
+                slicedResults = (slicedResults.Item2, slicedResults.Item1);
+            }
 
             AlignSlice(slicedResults.Item1, blade.direction, splitDistance);
             AlignSlice(slicedResults.Item2, blade.direction, -splitDistance);
         }
 
-        private void AlignSlice(GameObject slice, Vector3 normal, float offset)
+        private void AlignSlice(GameObject slice, Vector3 direction, float offset)
         {
-            // Tính toán góc xoay từ pháp tuyến của mặt phẳng
-            Quaternion sliceRotation = Quaternion.LookRotation(Vector3.forward, normal);
+            float angle = Mathf.Atan2(blade.direction.y, blade.direction.x) * Mathf.Rad2Deg;
+            slice.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            Debug.Log($"Direction: {blade.direction}, Angle: {angle}".Color("yellow"));
 
-            // Đặt góc xoay của lát cắt
-            slice.transform.rotation = sliceRotation;
+            // Quaternion sliceRotation = Quaternion.LookRotation(Vector3.forward, direction);
+            // slice.transform.rotation = sliceRotation; // Đặt góc xoay của lát cắt
 
             // Tách lát ra bằng cách dịch chuyển theo pháp tuyến của mặt phẳng
             slice.transform.SetParent(transform, false);
-            slice.transform.position += normal * offset;
+            slice.transform.position += direction * offset;
         }
 
         private void AddPhysicsToSlices()
