@@ -214,7 +214,7 @@ namespace NinjaFruit
         private void HandleScore()
         {
             var score = points;
-            if (sliceDistance.InRange(perfectRange.x, perfectRange.y))
+            if (sliceDistance.InRange(radius * perfectRange.x, radius * perfectRange.y))
             {
                 score *= perfectFactor;
                 var fxText = FxSpawner.Instance.SpawnFxTextPerfect();

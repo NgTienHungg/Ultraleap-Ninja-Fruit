@@ -4981,7 +4981,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_RenderMode: 4
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -5120,7 +5120,7 @@ MonoBehaviour:
   points: 1
   perfectFactor: 2
   sliceRange: {x: -0.4, y: 0.4}
-  perfectRange: {x: -0.1, y: 0.1}
+  perfectRange: {x: -1, y: 1}
   radius: 1
   testBlade: {fileID: 3049538093559120921}
 --- !u!1001 &8457310350440846007
