@@ -1,7 +1,6 @@
 using Hanzzz.MeshSlicerFree;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.InputSystem.Android;
 
 namespace NinjaFruit
 {
@@ -27,12 +26,12 @@ namespace NinjaFruit
         private Blade blade;
 
         public float radius = 1f;
+        private float sliceDistance;
 
         private void Awake()
         {
             fruitRigidbody = GetComponent<Rigidbody>();
             fruitCollider = GetComponent<Collider>();
-
             radius = standardRadius * transform.localScale.x;
         }
 
@@ -65,6 +64,10 @@ namespace NinjaFruit
                 slicedResults = (null, null);
             }
         }
+
+        #region ========== TEST ==========
+        [Space]
+        public Transform testBlade;
 
         [Button]
         public void TestSlice()
@@ -110,19 +113,19 @@ namespace NinjaFruit
             slicedResults.Item2.transform.position -= splitDistance * testBlade.up;
             fruitModel.SetActive(false);
         }
+        #endregion
 
         private bool TrySlice()
         {
             Plane slicePlane = new Plane(blade.transform.up, blade.transform.position);
             float distanceFromPlaneToFruit = slicePlane.GetDistanceToPoint(transform.position); // Tính khoảng cách từ tâm đến mặt phẳng cắt
-            float clampedDistance = Mathf.Clamp(distanceFromPlaneToFruit, sliceRange.x * radius, sliceRange.y * radius); // Giới hạn khoảng cách trong sliceRange
+            sliceDistance = Mathf.Clamp(distanceFromPlaneToFruit, sliceRange.x * radius, sliceRange.y * radius); // Giới hạn khoảng cách trong sliceRange
 
             // Nếu khoảng cách đã bị clamp, cập nhật vị trí mặt phẳng
-            if (Mathf.Abs(clampedDistance - distanceFromPlaneToFruit) > Mathf.Epsilon)
+            if (Mathf.Abs(sliceDistance - distanceFromPlaneToFruit) > Mathf.Epsilon)
             {
-                Debug.Log($"Clamp khoảng cách từ {distanceFromPlaneToFruit} thành {clampedDistance}");
-
-                Vector3 offset = (clampedDistance - distanceFromPlaneToFruit) * slicePlane.normal;
+                Debug.Log($"Clamp khoảng cách từ {distanceFromPlaneToFruit} thành {sliceDistance}");
+                Vector3 offset = (sliceDistance - distanceFromPlaneToFruit) * slicePlane.normal;
                 slicePlane.Translate(offset); // Dịch mặt phẳng cắt lại gần tâm
             }
 
@@ -133,58 +136,46 @@ namespace NinjaFruit
                 return false;
             }
 
-            slicedResults.Item1.gameObject.name = "Slice 1";
-            slicedResults.Item2.gameObject.name = "Slice 2";
-
             return true;
         }
 
         private void HandlePostSliceEffects()
         {
-            DisableFruitModel();
-            PlayJuiceEffect();
-            AlignSlices();
-            AddPhysicsToSlices();
-
-            ScoreManager.Instance.IncreaseScore(points);
-        }
-
-        private void DisableFruitModel()
-        {
+            // old fruit
             fruitCollider.enabled = false;
             fruitModel.SetActive(false);
-        }
-
-        private void PlayJuiceEffect()
-        {
             juiceEffect.Play();
+
+            AlignSlices();
+            AddPhysicsToSlices();
+            HandleScore();
         }
 
         private void AlignSlices()
         {
             // Sử dụng mặt phẳng cắt để xác định hướng tách
             float angle = Mathf.Atan2(blade.direction.y, blade.direction.x) * Mathf.Rad2Deg;
+            Debug.Log($"Direction: {blade.direction}, Angle: {angle}".Color("yellow"));
+
             if (Mathf.Abs(angle) > 90)
             {
+                // giữ cho Item 1 luôn ở trên, Item 2 ở dưới
                 slicedResults = (slicedResults.Item2, slicedResults.Item1);
             }
 
-            AlignSlice(slicedResults.Item1, blade.direction, splitDistance);
-            AlignSlice(slicedResults.Item2, blade.direction, -splitDistance);
+            slicedResults.Item1.gameObject.name = "Slice 1";
+            slicedResults.Item2.gameObject.name = "Slice 2";
+
+            AlignSlice(slicedResults.Item1, blade.direction, splitDistance, angle);
+            AlignSlice(slicedResults.Item2, blade.direction, -splitDistance, angle);
         }
 
-        private void AlignSlice(GameObject slice, Vector3 direction, float offset)
+        private void AlignSlice(GameObject slice, Vector3 direction, float offset, float angle)
         {
-            float angle = Mathf.Atan2(blade.direction.y, blade.direction.x) * Mathf.Rad2Deg;
-            slice.transform.rotation = Quaternion.Euler(0f, 0f, angle);
-            Debug.Log($"Direction: {blade.direction}, Angle: {angle}".Color("yellow"));
-
-            // Quaternion sliceRotation = Quaternion.LookRotation(Vector3.forward, direction);
-            // slice.transform.rotation = sliceRotation; // Đặt góc xoay của lát cắt
-
             // Tách lát ra bằng cách dịch chuyển theo pháp tuyến của mặt phẳng
             slice.transform.SetParent(transform, false);
             slice.transform.position += direction * offset;
+            slice.transform.rotation = Quaternion.Euler(0f, 0f, angle);
         }
 
         private void AddPhysicsToSlices()
@@ -220,6 +211,19 @@ namespace NinjaFruit
             return (-p.distance * p.normal, -p.distance * p.normal + xAxis, -p.distance * p.normal + yAxis);
         }
 
+        private void HandleScore()
+        {
+            var score = points;
+            if (sliceDistance.InRange(perfectRange.x, perfectRange.y))
+            {
+                score *= perfectFactor;
+                var fxText = FxSpawner.Instance.SpawnFxTextPerfect();
+                fxText.Setup(transform.position, slicedResults.Item1.transform.eulerAngles.z);
+            }
+
+            ScoreManager.Instance.IncreaseScore(score);
+        }
+
         [Button]
         public void Clear()
         {
@@ -227,10 +231,5 @@ namespace NinjaFruit
             meshSlicer = new MeshSlicer();
             fruitModel.SetActive(true);
         }
-
-        //========== TEST ==========
-
-        [Space]
-        public Transform testBlade;
     }
 }
