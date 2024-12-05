@@ -5117,6 +5117,7 @@ MonoBehaviour:
   fruitModel: {fileID: 8763740054025600018}
   intersectionMaterial: {fileID: 2100000, guid: ab4bead6eb712bc45acee70c9dd4c2c6, type: 2}
   juiceEffect: {fileID: 5871354886834241202}
+  rotateForce: 4
   points: 1
   perfectFactor: 2
   sliceRange: {x: -0.4, y: 0.4}

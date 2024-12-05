@@ -12,6 +12,7 @@ namespace NinjaFruit
         public GameObject fruitModel;
         public Material intersectionMaterial;
         public ParticleSystem juiceEffect;
+        public float rotateForce = 1f;
 
         [Header("Point")]
         public int points = 1;
@@ -124,7 +125,7 @@ namespace NinjaFruit
             // Nếu khoảng cách đã bị clamp, cập nhật vị trí mặt phẳng
             if (Mathf.Abs(sliceDistance - distanceFromPlaneToFruit) > Mathf.Epsilon)
             {
-                Debug.Log($"Clamp khoảng cách từ {distanceFromPlaneToFruit} thành {sliceDistance}");
+                // Debug.Log($"Clamp khoảng cách từ {distanceFromPlaneToFruit} thành {sliceDistance}");
                 Vector3 offset = (sliceDistance - distanceFromPlaneToFruit) * slicePlane.normal;
                 slicePlane.Translate(offset); // Dịch mặt phẳng cắt lại gần tâm
             }
@@ -155,7 +156,7 @@ namespace NinjaFruit
         {
             // Sử dụng mặt phẳng cắt để xác định hướng tách
             float angle = Mathf.Atan2(blade.direction.y, blade.direction.x) * Mathf.Rad2Deg;
-            Debug.Log($"Direction: {blade.direction}, Angle: {angle}".Color("yellow"));
+            // Debug.Log($"Direction: {blade.direction}, Angle: {angle}".Color("yellow"));
 
             if (Mathf.Abs(angle) > 90)
             {
@@ -189,6 +190,14 @@ namespace NinjaFruit
             var rb = slice.AddComponent<Rigidbody>();
             rb.velocity = fruitRigidbody.velocity;
             rb.AddForceAtPosition(forceDirection * blade.transform.up, blade.transform.position, ForceMode.Impulse);
+
+            // Add random torque for rotation
+            Vector3 randomTorque = new Vector3(
+                Random.Range(-1f, 1f),
+                Random.Range(-1f, 1f),
+                Random.Range(-1f, 1f)
+            );
+            rb.AddTorque(randomTorque * rotateForce, ForceMode.Impulse);
         }
 
         private (Vector3, Vector3, Vector3) Get3PointsOnPlane(Plane p)
