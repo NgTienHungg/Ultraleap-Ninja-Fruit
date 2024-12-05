@@ -151,5 +151,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55a6b04d42cb4455a088a7c11dcf250f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angle: 0
-  localZ: 0
+  offsetZ: -1
+  angleRange: {x: -60, y: 60}
+  clampAngleRange: {x: -30, y: 30}
