@@ -3,6 +3,7 @@
     "com.hungnt.packages": "https://gitlab.com/NgTienHungg/HungNT-Packages.git",
     "com.ultraleap.tracking": "7.1.0",
     "com.ultraleap.tracking.preview": "7.1.0",
+    "com.unity.2d.sprite": "1.0.0",
     "com.unity.addressables": "1.21.21",
     "com.unity.collab-proxy": "2.5.2",
     "com.unity.feature.development": "1.0.1",

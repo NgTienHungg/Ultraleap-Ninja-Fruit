@@ -20,6 +20,12 @@ namespace NinjaFruit
             }
         }
 
+        public static int BestScore
+        {
+            get => PlayerPrefs.GetInt("BestScore", 0);
+            set => PlayerPrefs.SetInt("BestScore", value);
+        }
+
         protected override void OnAwake() { }
 
         public void ResetScore()
@@ -35,6 +41,11 @@ namespace NinjaFruit
             txtScore.transform.localScale = Vector3.one * 1.5f;
             txtScore.transform.DOScale(Vector3.one * 1f, 0.2f)
                 .SetEase(Ease.OutQuad).SetUpdate(true);
+        }
+
+        public void UpdateBestScore()
+        {
+            BestScore = Mathf.Max(BestScore, Score);
         }
     }
 }

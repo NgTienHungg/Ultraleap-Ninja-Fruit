@@ -6,7 +6,6 @@ namespace NinjaFruit
     [RequireComponent(typeof(Collider))]
     public class FruitSpawner : MonoBehaviour
     {
-        public Transform sceneHolder;
         public Collider spawnArea;
 
         [Space]
@@ -26,22 +25,17 @@ namespace NinjaFruit
         public float maxForce = 22f;
         public float maxLifetime = 5f;
 
-        private void OnValidate()
-        {
-            spawnArea = GetComponent<Collider>();
-        }
+        // private void OnEnable()
+        // {
+        //     StartCoroutine(Spawn());
+        // }
+        //
+        // private void OnDisable()
+        // {
+        //     StopAllCoroutines();
+        // }
 
-        private void OnEnable()
-        {
-            StartCoroutine(Spawn());
-        }
-
-        private void OnDisable()
-        {
-            StopAllCoroutines();
-        }
-
-        private IEnumerator Spawn()
+        public IEnumerator Spawn()
         {
             yield return new WaitForSeconds(1f);
 

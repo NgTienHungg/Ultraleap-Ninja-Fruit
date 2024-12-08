@@ -1,6 +1,7 @@
 using Leap;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Utils = BaseSource.Utils;
 
 namespace NinjaFruit
 {
@@ -67,6 +68,9 @@ namespace NinjaFruit
         private void Update()
         {
             if (useHand)
+                return;
+
+            if (Input.GetMouseButtonDown(0) && Utils.IsMouseOverUI())
                 return;
 
             if (Input.GetMouseButtonDown(0))

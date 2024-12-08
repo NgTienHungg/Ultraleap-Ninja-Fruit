@@ -14,23 +14,36 @@ namespace NinjaFruit
         [SerializeField] private FruitSpawner fruitSpawner;
         [SerializeField] private Image fadeImage;
 
+        [Space]
+        public GameObject uiHome;
+        public GameObject uiMainGame;
+
         protected override void OnAwake() { }
 
         private void Start()
         {
-            NewGame();
+            OpenHome();
         }
 
-        private void NewGame()
+        private void OpenHome()
         {
-            ClearScene();
+            uiHome.SetActive(true);
+            uiMainGame.SetActive(false);
+        }
 
-            blade.enabled = true;
-            fruitSpawner.enabled = true;
+        public void NewGame()
+        {
+            uiHome.SetActive(false);
+            uiMainGame.SetActive(true);
 
             Time.timeScale = 1f;
             LifeManager.Instance.ResetLife();
             ScoreManager.Instance.ResetScore();
+            ClearScene();
+
+            blade.enabled = true;
+            fruitSpawner.enabled = true;
+            StartCoroutine(fruitSpawner.Spawn());
         }
 
         private void ClearScene()
@@ -51,6 +64,8 @@ namespace NinjaFruit
             {
                 blade.enabled = false;
                 fruitSpawner.enabled = false;
+                ScoreManager.Instance.UpdateBestScore();
+
                 ExplodeSequence();
             }
         }
@@ -63,7 +78,7 @@ namespace NinjaFruit
                 .SetUpdate(true).ToUniTask();
             await UniTask.Delay(200, ignoreTimeScale: true);
 
-            NewGame();
+            OpenHome();
 
             await fadeImage.DOColor(Color.clear, 0.5f)
                 .SetUpdate(true).ToUniTask();
