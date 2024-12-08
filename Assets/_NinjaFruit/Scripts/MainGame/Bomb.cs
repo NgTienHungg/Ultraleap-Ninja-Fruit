@@ -15,7 +15,7 @@ namespace NinjaFruit
                 fxExplosion.Play();
                 gameObject.SetActive(false);
             
-                GameManager.Instance.Explode();
+                GameController.Instance.Explode();
             }
         }
     }

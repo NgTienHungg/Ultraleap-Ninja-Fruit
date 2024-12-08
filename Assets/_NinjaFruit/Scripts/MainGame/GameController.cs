@@ -1,19 +1,18 @@
-using System.Collections;
 using BaseSource;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace NinjaFruit
 {
     [DefaultExecutionOrder(-1)]
-    public class GameManager : MonoSingleton<GameManager>
+    public class GameController : MonoSingleton<GameController>
     {
         public UIMainGamePanel uiMainGamePanel;
         [SerializeField] private Blade blade;
         [SerializeField] private Spawner spawner;
         [SerializeField] private Image fadeImage;
-
-        // public int score { get; private set; } = 0;
 
         protected override void OnAwake() { }
 
@@ -54,43 +53,20 @@ namespace NinjaFruit
         {
             blade.enabled = false;
             spawner.enabled = false;
-
-            StartCoroutine(ExplodeSequence());
+            ExplodeSequence();
         }
 
-        private IEnumerator ExplodeSequence()
+        private async void ExplodeSequence()
         {
-            float elapsed = 0f;
-            float duration = 0.5f;
+            await DOVirtual.Float(1f, 0.2f, 1f, (t) => Time.timeScale = t)
+                .SetEase(Ease.InCubic).SetUpdate(true).ToUniTask();
 
-            // Fade to white
-            while (elapsed < duration)
-            {
-                float t = Mathf.Clamp01(elapsed / duration);
-                fadeImage.color = Color.Lerp(Color.clear, Color.white, t);
-
-                Time.timeScale = 1f - t;
-                elapsed += Time.unscaledDeltaTime;
-
-                yield return null;
-            }
-
-            yield return new WaitForSecondsRealtime(1f);
+            await fadeImage.DOColor(Color.white, 0.5f).SetUpdate(true).ToUniTask();
+            await UniTask.Delay(500, ignoreTimeScale: true);
 
             NewGame();
 
-            elapsed = 0f;
-
-            // Fade back in
-            while (elapsed < duration)
-            {
-                float t = Mathf.Clamp01(elapsed / duration);
-                fadeImage.color = Color.Lerp(Color.white, Color.clear, t);
-
-                elapsed += Time.unscaledDeltaTime;
-
-                yield return null;
-            }
+            await fadeImage.DOColor(Color.clear, 0.5f).SetUpdate(true).ToUniTask();
         }
     }
 }
