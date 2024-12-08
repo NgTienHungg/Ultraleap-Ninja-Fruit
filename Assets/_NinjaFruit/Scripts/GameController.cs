@@ -9,9 +9,8 @@ namespace NinjaFruit
     [DefaultExecutionOrder(-1)]
     public class GameController : MonoSingleton<GameController>
     {
-        public UIMainGamePanel uiMainGamePanel;
         [SerializeField] private Blade blade;
-        [SerializeField] private Spawner spawner;
+        [SerializeField] private FruitSpawner fruitSpawner;
         [SerializeField] private Image fadeImage;
 
         protected override void OnAwake() { }
@@ -28,10 +27,9 @@ namespace NinjaFruit
             ClearScene();
 
             blade.enabled = true;
-            spawner.enabled = true;
+            fruitSpawner.enabled = true;
 
             ScoreManager.Instance.ResetScore();
-            uiMainGamePanel.Setup();
         }
 
         private void ClearScene()
@@ -52,13 +50,13 @@ namespace NinjaFruit
         public void Explode()
         {
             blade.enabled = false;
-            spawner.enabled = false;
+            fruitSpawner.enabled = false;
             ExplodeSequence();
         }
 
         private async void ExplodeSequence()
         {
-            await DOVirtual.Float(1f, 0.2f, 1f, (t) => Time.timeScale = t)
+            await DOVirtual.Float(1f, 0.2f, 0.6f, (t) => Time.timeScale = t)
                 .SetEase(Ease.InCubic).SetUpdate(true).ToUniTask();
 
             await fadeImage.DOColor(Color.white, 0.5f).SetUpdate(true).ToUniTask();

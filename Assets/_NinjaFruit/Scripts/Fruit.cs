@@ -226,8 +226,7 @@ namespace NinjaFruit
             if (sliceDistance.InRange(radius * perfectRange.x, radius * perfectRange.y))
             {
                 score *= perfectFactor;
-                var fxText = FxSpawner.Instance.SpawnFxTextPerfect();
-                fxText.Setup(transform.position, slicedResults.Item1.transform.eulerAngles.z);
+                TextSpawner.Instance.SpawnTextPerfect(transform.position, slicedResults.Item1.transform.eulerAngles.z);
             }
 
             ScoreManager.Instance.IncreaseScore(score);

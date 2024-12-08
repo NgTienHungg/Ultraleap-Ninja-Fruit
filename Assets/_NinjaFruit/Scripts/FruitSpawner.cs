@@ -4,7 +4,7 @@ using UnityEngine;
 namespace NinjaFruit
 {
     [RequireComponent(typeof(Collider))]
-    public class Spawner : MonoBehaviour
+    public class FruitSpawner : MonoBehaviour
     {
         public Transform sceneHolder;
         public Collider spawnArea;
@@ -71,17 +71,8 @@ namespace NinjaFruit
                 // Add upward force
                 fruit.GetComponent<Rigidbody>().AddForce(fruit.transform.up * force, ForceMode.Impulse);
 
-                // Add random torque for rotation
-                // Vector3 randomTorque = new Vector3(
-                //     Random.Range(-1f, 1f), 
-                //     Random.Range(-1f, 1f), 
-                //     Random.Range(-1f, 1f)
-                // );
-                // fruit.GetComponent<Rigidbody>().AddTorque(randomTorque * force, ForceMode.Impulse);
-
                 yield return new WaitForSeconds(Random.Range(minSpawnDelay, maxSpawnDelay));
             }
         }
-
     }
 }

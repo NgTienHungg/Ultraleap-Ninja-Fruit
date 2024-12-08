@@ -167,6 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0733b58b62bd461ea69e4d2584026609, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  txtScore: {fileID: 793986148}
 --- !u!1 &176548510
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,7 +374,7 @@ GameObject:
   - component: {fileID: 262671763}
   - component: {fileID: 262671764}
   m_Layer: 0
-  m_Name: Fx Spawner
+  m_Name: Text Spawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -407,10 +408,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   listFxTextPrefab:
-  - {fileID: 7284293192673375032, guid: 30044a064d2669e4786d280cc64ccc70, type: 3}
-  - {fileID: 8463677100710839873, guid: 540063773e4e0b5418486626744eb0f7, type: 3}
-  - {fileID: 3923653561966075365, guid: b967ff315172fa240aa0bd72451009ee, type: 3}
-  - {fileID: 5733559778312526583, guid: f9bc788638ea1194eaca54b6e049fe4c, type: 3}
+  - {fileID: 5501667194966172734, guid: 30044a064d2669e4786d280cc64ccc70, type: 3}
+  - {fileID: 6646150048957403463, guid: 540063773e4e0b5418486626744eb0f7, type: 3}
+  - {fileID: 2251031371018947299, guid: b967ff315172fa240aa0bd72451009ee, type: 3}
+  - {fileID: 7412758991228259825, guid: f9bc788638ea1194eaca54b6e049fe4c, type: 3}
+  offsetZ: -1
+  angleRange: {x: -60, y: 60}
+  clampAngleRange: {x: -30, y: 30}
+  lifeTime: 5
 --- !u!1 &271695646
 GameObject:
   m_ObjectHideFlags: 0
@@ -1485,8 +1490,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1220267150}
-  - component: {fileID: 1220267152}
-  - component: {fileID: 1220267151}
   m_Layer: 5
   m_Name: UI MainGame Panel
   m_TagString: Untagged
@@ -1517,32 +1520,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1220267151
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1220267149}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd70e31dc1ff454eb394e5eca8cae37f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tweenPlayer: {fileID: 1220267152}
-  scoreTxt: {fileID: 793986148}
---- !u!114 &1220267152
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1220267149}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff8178e8fdbd428b90bea69ee5c1e470, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1242090223
 GameObject:
   m_ObjectHideFlags: 0
@@ -1773,7 +1750,7 @@ GameObject:
   - component: {fileID: 1442567885}
   - component: {fileID: 1442567886}
   m_Layer: 0
-  m_Name: Game Manager
+  m_Name: Game Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1806,9 +1783,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2029e1e563546de449e26436fe25cd8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiMainGamePanel: {fileID: 1220267151}
   blade: {fileID: 835024514}
-  spawner: {fileID: 1865947125}
+  fruitSpawner: {fileID: 1865947125}
   fadeImage: {fileID: 1744158372}
 --- !u!1 &1503720348
 GameObject:
