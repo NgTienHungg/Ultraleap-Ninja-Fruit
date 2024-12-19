@@ -12,7 +12,6 @@ namespace NinjaFruit
         public GameObject uiHome;
         public GameObject uiMainGame;
         public Image fadeImage;
-        public TextMeshProUGUI txtBestScore;
 
         protected override void OnAwake() { }
 
@@ -20,7 +19,6 @@ namespace NinjaFruit
         {
             uiHome.SetActive(true);
             uiMainGame.SetActive(false);
-            txtBestScore.text = ScoreManager.BestScore.ToString();
         }
 
         public void ShowUIMainGame()

@@ -1,3 +1,4 @@
+using System;
 using BaseSource;
 using DG.Tweening;
 using TMPro;
@@ -8,6 +9,7 @@ namespace NinjaFruit
     public class ScoreManager : MonoSingleton<ScoreManager>
     {
         public TextMeshProUGUI txtScore;
+        public TextMeshProUGUI txtBestScore;
 
         private int _score;
         public int Score
@@ -28,6 +30,11 @@ namespace NinjaFruit
 
         protected override void OnAwake() { }
 
+        private void Start()
+        {
+            txtBestScore.text = BestScore.ToString();
+        }
+
         public void ResetScore()
         {
             Score = 0;
@@ -46,6 +53,7 @@ namespace NinjaFruit
         public void UpdateBestScore()
         {
             BestScore = Mathf.Max(BestScore, Score);
+            txtBestScore.text = BestScore.ToString();
         }
     }
 }
