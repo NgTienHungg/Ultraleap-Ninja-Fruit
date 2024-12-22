@@ -67,15 +67,17 @@ namespace NinjaFruit
         #region === MOUSE ===
         private void Update()
         {
+            // dùng tay thay vì chuột
             if (useHand)
                 return;
 
+            // có bấm chuột nhưng đang ở trên UI
             if (Input.GetMouseButtonDown(0) && Utils.IsMouseOverUI())
                 return;
 
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0)) // bắt đầu cắt
                 StartSlice();
-            else if (Input.GetMouseButtonUp(0))
+            else if (Input.GetMouseButtonUp(0)) // kết thúc cắt
                 StopSlice();
             else if (slicing)
                 ContinueSlice();

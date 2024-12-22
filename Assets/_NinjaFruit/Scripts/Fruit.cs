@@ -76,33 +76,18 @@ namespace NinjaFruit
             ClearPreviousSlices();
 
             Plane slicePlane = new Plane(testBlade.up, testBlade.position);
-            float distanceFromPlaneToFruit = slicePlane.GetDistanceToPoint(transform.position);
-            Debug.Log($"Khoảng cách ban đầu từ tâm đến mặt phẳng cắt: {distanceFromPlaneToFruit}");
-
-            // Giới hạn khoảng cách trong sliceRange
-            // Mathf.Sign(distanceFromPlaneToFruit) *
-            //     Mathf.Clamp(Mathf.Abs(distanceFromPlaneToFruit),
-
-            float clampedDistance = Mathf.Clamp(distanceFromPlaneToFruit, sliceRange.x * radius, sliceRange.y * radius);
+            float distanceFromPlaneToFruit = slicePlane.GetDistanceToPoint(transform.position); // Tính khoảng cách từ tâm đến mặt phẳng cắt
+            float clampedDistance = Mathf.Clamp(distanceFromPlaneToFruit, sliceRange.x * radius, sliceRange.y * radius); // Giới hạn khoảng cách trong sliceRange
 
             // Nếu khoảng cách đã bị clamp, cập nhật vị trí mặt phẳng
             if (Mathf.Abs(clampedDistance - distanceFromPlaneToFruit) > Mathf.Epsilon)
             {
-                Debug.Log($"Clamp khoảng cách từ {distanceFromPlaneToFruit} thành {clampedDistance}");
-
-                // Dịch mặt phẳng cắt lại gần tâm
                 Vector3 offset = (clampedDistance - distanceFromPlaneToFruit) * slicePlane.normal;
-                slicePlane.Translate(offset);
-                // slicePlane = new Plane(slicePlane.normal, slicePlane.distance + (clampedDistance - distance));
-                // testBlade.position += offset; // Cập nhật vị trí testBlade
+                slicePlane.Translate(offset); // Dịch mặt phẳng cắt lại gần tâm
             }
 
-            Debug.Log("Radius: " + transform.localScale.x * standardRadius);
-
-            //new Plane(testBlade.transform.up, testBlade.transform.position)
             slicedResults = meshSlicer.Slice(fruitModel, Get3PointsOnPlane(slicePlane), intersectionMaterial);
-
-            if (null == slicedResults.Item1)
+            if (slicedResults.Item1 == null)
             {
                 Debug.Log("Slice plane does not intersect slice target.");
                 return;
@@ -142,14 +127,14 @@ namespace NinjaFruit
 
         private void HandlePostSliceEffects()
         {
-            // old fruit
-            fruitCollider.enabled = false;
+            // tắt model cũ, tắt collider và phát hiệu ứng nước ép
             fruitModel.SetActive(false);
+            fruitCollider.enabled = false;
             juiceEffect.Play();
 
-            AlignSlices();
-            AddPhysicsToSlices();
-            HandleScore();
+            AlignSlices(); // xoay 2 nửa theo hướng cắt
+            AddPhysicsToSlices(); // thêm vật lý vào 2 nửa quả
+            HandleScore(); // xử lý điểm
         }
 
         private void AlignSlices()
@@ -217,15 +202,17 @@ namespace NinjaFruit
             }
 
             Vector3 yAxis = Vector3.Cross(p.normal, xAxis);
-            return (-p.distance * p.normal, -p.distance * p.normal + xAxis, -p.distance * p.normal + yAxis);
+            return (-p.distance * p.normal, -p.distance * p.normal + xAxis, -p.distance * p.normal + yAxis);   
         }
 
         private void HandleScore()
         {
             var score = points;
+            
+            // nếu cắt trong vùng cắt hoàn hảo (tạo 2 nửa gần bằng nhau)
             if (sliceDistance.InRange(radius * perfectRange.x, radius * perfectRange.y))
             {
-                score *= perfectFactor;
+                score *= perfectFactor; // nhân điểm lên
                 TextSpawner.Instance.SpawnTextPerfect(transform.position, slicedResults.Item1.transform.eulerAngles.z);
             }
 

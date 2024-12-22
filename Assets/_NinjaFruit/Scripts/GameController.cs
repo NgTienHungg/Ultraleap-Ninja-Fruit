@@ -51,14 +51,14 @@ namespace NinjaFruit
                 blade.enabled = false;
                 fruitSpawner.enabled = false;
                 ScoreManager.Instance.UpdateBestScore();
-
                 ExplodeSequence();
             }
         }
 
         private async void ExplodeSequence()
         {
-            await DOVirtual.Float(1f, 0.2f, 1f, (t) => Time.timeScale = t).SetEase(Ease.OutCubic).SetUpdate(true).ToUniTask();
+            await DOVirtual.Float(1f, 0.2f, 1f, (t) => Time.timeScale = t)
+                .SetEase(Ease.OutCubic).SetUpdate(true).ToUniTask();
             await UIManager.Instance.FadeIn();
             await UniTask.Delay(200, ignoreTimeScale: true);
             await UIManager.Instance.FadeOut();
