@@ -168,6 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   txtScore: {fileID: 793986148}
+  txtBestScore: {fileID: 544943843}
 --- !u!1 &245551792
 GameObject:
   m_ObjectHideFlags: 0
@@ -391,7 +392,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95a81be6c9d47f64d9e8262eed6997fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHand: 0
+  useHand: 1
   handType: 0
   fingerType: 1
   sliceCollider: {fileID: 365035801}
@@ -417,7 +418,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.05
+  m_Radius: 0.01
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &474681623
 GameObject:
@@ -1204,7 +1205,6 @@ MonoBehaviour:
   uiHome: {fileID: 1963927235}
   uiMainGame: {fileID: 1220267149}
   fadeImage: {fileID: 1744158372}
-  txtBestScore: {fileID: 544943843}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1638,7 +1638,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.05
+  m_Radius: 0.01
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &963194225
 GameObject:

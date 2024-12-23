@@ -5121,7 +5121,7 @@ MonoBehaviour:
   points: 1
   perfectFactor: 2
   sliceRange: {x: -0.4, y: 0.4}
-  perfectRange: {x: -0.15, y: 0.15}
+  perfectRange: {x: -2, y: 0.2}
   radius: 1
   testBlade: {fileID: 3049538093559120921}
 --- !u!1001 &8457310350440846007
